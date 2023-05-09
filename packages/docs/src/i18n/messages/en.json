@@ -40,6 +40,8 @@
   "close": "Close",
   "code": "Code",
   "codepen-template": "Codepen template",
+  "copied": "Copied!",
+  "copy-link": "Copy link",
   "company": "Company",
   "comparison": {
     "average": "**Based on average of all Major/Minor/Patch releases over the last 12 months.",
@@ -94,6 +96,7 @@
   "extra-extra-large": "Extra extra large",
   "extra-large": "Extra large",
   "extra-small": "Extra small",
+  "faq": "FAQs",
   "feature-guides": "Feature guides",
   "features": "Features",
   "feedback": "Feedback",

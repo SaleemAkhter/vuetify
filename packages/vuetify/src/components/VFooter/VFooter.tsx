@@ -3,6 +3,7 @@ import './VFooter.sass'
 
 // Composables
 import { makeBorderProps, useBorder } from '@/composables/border'
+import { makeComponentProps } from '@/composables/component'
 import { makeElevationProps, useElevation } from '@/composables/elevation'
 import { makeLayoutItemProps, useLayoutItem } from '@/composables/layout'
 import { makeRoundedProps, useRounded } from '@/composables/rounded'
@@ -13,26 +14,29 @@ import { useResizeObserver } from '@/composables/resizeObserver'
 
 // Utilities
 import { computed, ref, toRef } from 'vue'
-import { genericComponent, useRender } from '@/util'
+import { genericComponent, propsFactory, useRender } from '@/util'
+
+export const makeVFooterProps = propsFactory({
+  app: Boolean,
+  color: String,
+  height: {
+    type: [Number, String],
+    default: 'auto',
+  },
+
+  ...makeBorderProps(),
+  ...makeComponentProps(),
+  ...makeElevationProps(),
+  ...makeLayoutItemProps(),
+  ...makeRoundedProps(),
+  ...makeTagProps({ tag: 'footer' }),
+  ...makeThemeProps(),
+}, 'v-footer')
 
 export const VFooter = genericComponent()({
   name: 'VFooter',
 
-  props: {
-    app: Boolean,
-    color: String,
-    height: {
-      type: [Number, String],
-      default: 'auto',
-    },
-
-    ...makeBorderProps(),
-    ...makeElevationProps(),
-    ...makeLayoutItemProps(),
-    ...makeRoundedProps(),
-    ...makeTagProps({ tag: 'footer' }),
-    ...makeThemeProps(),
-  },
+  props: makeVFooterProps(),
 
   setup (props, { slots }) {
     const { themeClasses } = provideTheme(props)
@@ -67,10 +71,12 @@ export const VFooter = genericComponent()({
           borderClasses.value,
           elevationClasses.value,
           roundedClasses.value,
+          props.class,
         ]}
         style={[
           backgroundColorStyles.value,
           props.app ? layoutItemStyles.value : undefined,
+          props.style,
         ]}
         v-slots={ slots }
       />

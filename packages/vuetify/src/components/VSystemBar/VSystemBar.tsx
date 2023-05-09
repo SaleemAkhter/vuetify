@@ -2,6 +2,7 @@
 import './VSystemBar.sass'
 
 // Composables
+import { makeComponentProps } from '@/composables/component'
 import { makeElevationProps, useElevation } from '@/composables/elevation'
 import { makeLayoutItemProps, useLayoutItem } from '@/composables/layout'
 import { makeRoundedProps, useRounded } from '@/composables/rounded'
@@ -12,22 +13,25 @@ import { useSsrBoot } from '@/composables/ssrBoot'
 
 // Utilities
 import { computed, ref, toRef } from 'vue'
-import { genericComponent, useRender } from '@/util'
+import { genericComponent, propsFactory, useRender } from '@/util'
+
+export const makeVSystemBarProps = propsFactory({
+  color: String,
+  height: [Number, String],
+  window: Boolean,
+
+  ...makeComponentProps(),
+  ...makeElevationProps(),
+  ...makeLayoutItemProps(),
+  ...makeRoundedProps(),
+  ...makeTagProps(),
+  ...makeThemeProps(),
+}, 'v-system-bar')
 
 export const VSystemBar = genericComponent()({
   name: 'VSystemBar',
 
-  props: {
-    color: String,
-    height: [Number, String],
-    window: Boolean,
-
-    ...makeElevationProps(),
-    ...makeLayoutItemProps(),
-    ...makeRoundedProps(),
-    ...makeTagProps(),
-    ...makeThemeProps(),
-  },
+  props: makeVSystemBarProps(),
 
   setup (props, { slots }) {
     const { themeClasses } = provideTheme(props)
@@ -55,11 +59,13 @@ export const VSystemBar = genericComponent()({
           backgroundColorClasses.value,
           elevationClasses.value,
           roundedClasses.value,
+          props.class,
         ]}
         style={[
           backgroundColorStyles.value,
           layoutItemStyles.value,
           ssrBootStyles.value,
+          props.style,
         ]}
         v-slots={ slots }
       />

@@ -2,6 +2,7 @@
 import Touch from '@/directives/touch'
 
 // Composables
+import { makeComponentProps } from '@/composables/component'
 import { makeGroupItemProps, useGroupItem } from '@/composables/group'
 import { makeLazyProps, useLazy } from '@/composables/lazy'
 import { MaybeTransition } from '@/composables/transition'
@@ -9,10 +10,25 @@ import { useSsrBoot } from '@/composables/ssrBoot'
 
 // Utilities
 import { computed, inject, nextTick, ref } from 'vue'
-import { convertToUnit, genericComponent, useRender } from '@/util'
+import { convertToUnit, genericComponent, propsFactory, useRender } from '@/util'
 
 // Types
 import { VWindowGroupSymbol, VWindowSymbol } from './VWindow'
+
+export const makeVWindowItemProps = propsFactory({
+  reverseTransition: {
+    type: [Boolean, String],
+    default: undefined,
+  },
+  transition: {
+    type: [Boolean, String],
+    default: undefined,
+  },
+
+  ...makeComponentProps(),
+  ...makeGroupItemProps(),
+  ...makeLazyProps(),
+}, 'v-window-item')
 
 export const VWindowItem = genericComponent()({
   name: 'VWindowItem',
@@ -21,19 +37,7 @@ export const VWindowItem = genericComponent()({
     Touch,
   },
 
-  props: {
-    reverseTransition: {
-      type: [Boolean, String],
-      default: undefined,
-    },
-    transition: {
-      type: [Boolean, String],
-      default: undefined,
-    },
-
-    ...makeGroupItemProps(),
-    ...makeLazyProps(),
-  },
+  props: makeVWindowItemProps(),
 
   emits: {
     'group:selected': (val: { value: boolean }) => true,
@@ -127,7 +131,9 @@ export const VWindowItem = genericComponent()({
           class={[
             'v-window-item',
             groupItem.selectedClass.value,
+            props.class,
           ]}
+          style={ props.style }
           v-show={ groupItem.isSelected.value }
         >
           { hasContent.value && slots.default?.() }

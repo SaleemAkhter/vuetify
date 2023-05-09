@@ -3,13 +3,14 @@ import { VTimelineDivider } from './VTimelineDivider'
 
 // Composables
 import { IconValue } from '@/composables/icons'
+import { makeComponentProps } from '@/composables/component'
 import { makeElevationProps } from '@/composables/elevation'
 import { makeRoundedProps } from '@/composables/rounded'
 import { makeSizeProps } from '@/composables/size'
 import { makeTagProps } from '@/composables/tag'
 
 // Utilities
-import { convertToUnit, genericComponent, useRender } from '@/util'
+import { convertToUnit, genericComponent, propsFactory, useRender } from '@/util'
 import { makeDimensionProps, useDimension } from '@/composables/dimensions'
 import { ref, watch } from 'vue'
 
@@ -23,28 +24,31 @@ export type VTimelineItemSlots = {
   opposite: []
 }
 
+export const makeVTimelineItemProps = propsFactory({
+  density: String as PropType<'default' | 'compact'>,
+  dotColor: String,
+  fillDot: Boolean,
+  hideDot: Boolean,
+  hideOpposite: {
+    type: Boolean,
+    default: undefined,
+  },
+  icon: IconValue,
+  iconColor: String,
+  lineInset: [Number, String],
+
+  ...makeComponentProps(),
+  ...makeDimensionProps(),
+  ...makeElevationProps(),
+  ...makeRoundedProps(),
+  ...makeSizeProps(),
+  ...makeTagProps(),
+}, 'v-timeline-item')
+
 export const VTimelineItem = genericComponent<VTimelineItemSlots>()({
   name: 'VTimelineItem',
 
-  props: {
-    density: String as PropType<'default' | 'compact'>,
-    dotColor: String,
-    fillDot: Boolean,
-    hideDot: Boolean,
-    hideOpposite: {
-      type: Boolean,
-      default: undefined,
-    },
-    icon: IconValue,
-    iconColor: String,
-    lineInset: [Number, String],
-
-    ...makeRoundedProps(),
-    ...makeElevationProps(),
-    ...makeSizeProps(),
-    ...makeTagProps(),
-    ...makeDimensionProps(),
-  },
+  props: makeVTimelineItemProps(),
 
   setup (props, { slots }) {
     const { dimensionStyles } = useDimension(props)
@@ -65,11 +69,15 @@ export const VTimelineItem = genericComponent<VTimelineItemSlots>()({
           {
             'v-timeline-item--fill-dot': props.fillDot,
           },
+          props.class,
         ]}
-        style={{
-          '--v-timeline-dot-size': convertToUnit(dotSize.value),
-          '--v-timeline-line-inset': props.lineInset ? `calc(var(--v-timeline-dot-size) / 2 + ${convertToUnit(props.lineInset)})` : convertToUnit(0),
-        }}
+        style={[
+          {
+            '--v-timeline-dot-size': convertToUnit(dotSize.value),
+            '--v-timeline-line-inset': props.lineInset ? `calc(var(--v-timeline-dot-size) / 2 + ${convertToUnit(props.lineInset)})` : convertToUnit(0),
+          },
+          props.style,
+        ]}
       >
         <div
           class="v-timeline-item__body"
